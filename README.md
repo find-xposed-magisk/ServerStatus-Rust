@@ -128,6 +128,15 @@ ServerStatus-web 主题由 [@mjjrock](https://github.com/mjjrock) 修改提供�
 
 </details>
 
+<details>
+  <summary>ServerStatus-nezha 主题</summary>
+
+ServerStatus-nezha 主题由 [@snowie2000](https://github.com/snowie2000) 修改提供，类似于哪吒探针v1，[主题地址](https://github.com/snowie2000/serverstatus-nezha-theme)
+
+<img width="1425" alt="image" src="https://github.com/user-attachments/assets/2f0a9ca1-0d7d-472c-bf0d-eada396f6219">
+
+</details>
+
 
 <details>
   <summary>v1.5.7 版本主题</summary>
@@ -481,34 +490,25 @@ python3 stat_client.py -a "http://127.0.0.1:8080/report" -u h1 -p p1 -n
 server {
   # ssl, domain 等其它 nginx 配置
 
-  # 反代 /report 请求
-  location = /report {
+  # 自动反代所有请求
+  location @proxy {
     proxy_set_header Host              $host;
     proxy_set_header X-Real-IP         $remote_addr;
     proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header X-Forwarded-Host  $host;
     proxy_set_header X-Forwarded-Port  $server_port;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection $http_connection;
 
-    proxy_pass http://127.0.0.1:8080/report;
+    proxy_pass http://127.0.0.1:8080;
   }
-  # 反代 json 数据请求
-  location = /json/stats.json {
-    proxy_set_header Host              $host;
-    proxy_set_header X-Real-IP         $remote_addr;
-    proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-    proxy_set_header X-Forwarded-Host  $host;
-    proxy_set_header X-Forwarded-Port  $server_port;
 
-    proxy_pass http://127.0.0.1:8080/json/stats.json;
-  }
-  # v1.4.0后，同样需要反代  /detail, /map
-
-  # 其它 html,js,css 等，走本地文本
+  # 如果主题存在相关文件则使用，否则回退到上游
   location / {
     root   /opt/ServerStatus/web; # 你自己修改的主题目录
     index  index.html index.htm;
+    try_files $uri $uri/ @proxy;
   }
 }
 ```
