@@ -13,6 +13,7 @@ use std::thread;
 use std::time::Duration;
 use std::time::{SystemTime, UNIX_EPOCH};
 use tokio::time;
+use std::thread::sleep;
 
 use stat_common::server_status::{IpInfo, StatRequest, SysInfo};
 type GenericError = Box<dyn std::error::Error + Send + Sync>;
@@ -223,7 +224,22 @@ fn http_report(args: &Args, stat_base: &mut StatRequest) -> Result<()> {
             domain = format!("{domain}:80");
         }
     }
-    let tcp_addr = domain.to_socket_addrs()?.next().unwrap();
+    let mut retries = 0;
+    let max_retries = 10; // Indicates a maximum of 1024s delay = 17 minutes
+    let tcp_addr = loop {
+        match domain.to_socket_addrs() {
+            Ok(mut addrs) => break addrs.next().unwrap(),
+            Err(e) => {
+                if retries >= max_retries {
+                    return Err(Box::new(e)); // Return the error if retries are exhausted
+                }
+                retries += 1;
+                let delay = Duration::from_secs(2u64.pow(retries)); // Exponential backoff
+                eprintln!("Name resolution failed, retrying in {:?}...", delay);
+                sleep(delay);
+            }
+        }
+    };
     let (ipv4, ipv6) = (tcp_addr.is_ipv4(), tcp_addr.is_ipv6());
     if ipv4 {
         stat_base.online4 = ipv4;
