@@ -6,10 +6,6 @@
 
 <div align="center">
     <p>
-        <a href="https://github.com/zdz/ServerStatus-Rust/actions/workflows/docker.yml">
-            <img src="https://github.com/zdz/ServerStatus-Rust/actions/workflows/docker.yml/badge.svg"
-                  alt="Docker">
-        </a>
         <a href="https://github.com/zdz/ServerStatus-Rust/actions/workflows/release.yml">
             <img src="https://github.com/zdz/ServerStatus-Rust/actions/workflows/release.yml/badge.svg" alt="Release"></a>
         <a href="https://github.com/zdz/ServerStatus-Rust/issues">
@@ -42,8 +38,9 @@
 - [2. 安装部署](#2-安装部署)
   - [2.1 快速体验](#21-快速体验)
   - [2.2 快速部署](#22-快速部署)
-  - [2.3 服务管理脚本部署](#23-服务管理脚本部署)
+  - [2.3 服务管理脚本](#23-服务管理脚本)
   - [2.4 Railway 部署](#24-railway-部署)
+  - [2.5 Heroku 部署](#25-heroku-部署)
 - [3. 服务端说明](#3-服务端说明)
   - [3.1 配置文件 `config.toml`](#31-配置文件-configtoml)
   - [3.2 服务端运行](#32-服务端运行)
@@ -62,6 +59,8 @@
 - 多系统支持 `Linux`、`MacOS`、`Windows`、`Android`、`Raspberry Pi`
 - 支持上下线和简单自定义规则告警 (`telegram`、`wechat`、`email`、`webhook`)
 - 支持 `http` 协议上报，方便部署到各免费容器服务和配合 `cf` 等优化上报链路
+- 支持 `cloudflare tunnels` 和 `mTLS` 部署
+- 支持主机分组动态注册，简化配置
 - 支持 `vnstat` 统计月流量，重启不丢流量数据
 - 支持 `railway` 快速部署
 - 支持 `systemd` 开机自启
@@ -77,9 +76,39 @@
 
 📚 完整文档迁移至 [doc.ssr.rs](https://doc.ssr.rs)
 
+📚 保姆级教程 [Google](https://www.google.com/search?q=%22serverstatus-rust%22)
+|
+[Bing](https://www.bing.com/search?q=%22serverstatus-rust%22)
+
 ### 🍀 主题
 
 如果你觉得你创造/修改的主题还不错，欢迎分享/PR，前端单独部署方法参考 [#37](https://github.com/zdz/ServerStatus-Rust/discussions/37)
+
+<details>
+  <summary>ServerStatus-theme 主题</summary>
+
+作者 [@JingBh](https://github.com/JingBh)
+👉 [主题地址](https://github.com/JingBh/ServerStatus-theme)
+支持快速部署一键命令生成
+
+| <img width="1269" alt="image" src="https://github.com/zdz/ServerStatus-Rust/assets/152173/33eb8685-b0ed-4548-92af-8cfdded7d011"> | <img width="596" alt="image" src="https://github.com/zdz/ServerStatus-Rust/assets/152173/15e9c405-6491-4f41-ad0e-68aae96d709c"> |
+|-|-|
+
+[演示：Demo](https://status.jingbh.cloud)
+
+</details>
+
+<details>
+  <summary>ServerStatus-Theme-Light 主题</summary>
+
+👉 [主题地址](https://github.com/orilights/ServerStatus-Theme-Light)
+作者 [@orilights](https://github.com/orilights)
+
+<img width="1836" alt="image" src="https://github.com/zdz/ServerStatus-Rust/assets/152173/35fdd138-31b8-46d0-8ea8-c2d4e7ef2b52">
+
+[演示：Demo](https://sstl-demo.orilight.top)
+
+</details>
 
 <details>
   <summary>Hotaru 主题</summary>
@@ -99,6 +128,15 @@ ServerStatus-web 主题由 [@mjjrock](https://github.com/mjjrock) 修改提供�
 
 </details>
 
+<details>
+  <summary>ServerStatus-nezha 主题</summary>
+
+ServerStatus-nezha 主题由 [@snowie2000](https://github.com/snowie2000) 修改提供，类似于哪吒探针v1，[主题地址](https://github.com/snowie2000/serverstatus-nezha-theme)
+
+<img width="1425" alt="image" src="https://github.com/user-attachments/assets/2f0a9ca1-0d7d-472c-bf0d-eada396f6219">
+
+</details>
+
 
 <details>
   <summary>v1.5.7 版本主题</summary>
@@ -115,25 +153,27 @@ ServerStatus-web 主题由 [@mjjrock](https://github.com/mjjrock) 修改提供�
 # for CentOS/Debian/Ubuntu x86_64
 mkdir -p /opt/ServerStatus && cd /opt/ServerStatus
 # apt install -y unzip / yum install -y unzip
-wget --no-check-certificate -qO one-touch.sh 'https://raw.githubusercontent.com/zdz/ServerStatus-Rust/master/one-touch.sh'
+wget --no-check-certificate -qO one-touch.sh 'https://raw.githubusercontent.com/zdz/ServerStatus-Rust/master/scripts/one-touch.sh'
 bash -ex one-touch.sh
 # 部署完毕，打开 http://127.0.0.1:8080/ 或 http://<你的IP>:8080/
-# 自定义部署可参照 one-touch.sh 脚本
+# 自定义部署可参照 scripts/one-touch.sh 脚本
 ```
 
 ### 2.2 快速部署
 
 👉 [快速部署](https://doc.ssr.rs/rapid_deploy)
 
-### 2.3 服务管理脚本部署
+### 2.3 服务管理脚本
 
-[@Colsro](https://github.com/Colsro)  提供
+<details>
+  <summary>服务管理脚本说明</summary>
 
-[@Yooona-Lim](https://github.com/Yooona-Lim)  更新
+由 [@Colsro](https://github.com/Colsro) &
+[@Yooona-Lim](https://github.com/Yooona-Lim)  贡献
 
 ```bash
 # 下载脚本
-wget --no-check-certificate -qO status.sh 'https://raw.githubusercontent.com/zdz/ServerStatus-Rust/master/status.sh'
+wget --no-check-certificate -qO status.sh 'https://raw.githubusercontent.com/zdz/ServerStatus-Rust/master/scripts/status.sh'
 
 # 安装 服务端
 bash status.sh -i -s
@@ -178,10 +218,11 @@ help:
         -rs -c          恢复 Client
         -rs -a          恢复 Server and Client
     -h,--help       查看帮助
-若无法访问 Github: 
+若无法访问 Github:
     CN=true bash status.sh args
 ```
 
+</details>
 
 ### 2.4 Railway 部署
 
@@ -190,6 +231,9 @@ help:
 
 [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/kzT46l?referralCode=pJYbdU)
 
+### 2.5 Heroku 部署
+
+[如何在 Heroku 上部署 Rust 版 ServerStatus 云探针](https://github.com/zdz/ServerStatus-Rust/blob/master/heroku/README.md)
 
 ## 3. 服务端说明
 
@@ -266,7 +310,7 @@ custom_tpl = """
 
 ### 3.2 服务端运行
 ```bash
-# systemd 方式， 参照 one-touch.sh 脚本 (推荐)
+# systemd 方式， 参照 scripts/one-touch.sh 脚本 (推荐)
 
 # 💪 手动方式
 # help
@@ -312,7 +356,7 @@ docker-compose up -d
 # alpine linux 需要安装相关命令 apk add procps iproute2 coreutils
 # 如果 Rust 版客户端在你的系统无法使用，请切换到下面 4.2 Python 跨平台版本
 
-# systemd 方式， 参照 one-touch.sh 脚本 (推荐)
+# systemd 方式， 参照 scripts/one-touch.sh 脚本 (推荐)
 
 # 💪 手动方式
 # Rust 版本 Client
@@ -320,6 +364,8 @@ docker-compose up -d
 ./stat_client -a "http://127.0.0.1:8080/report" -u h1 -p p1
 # 或
 ./stat_client -a "grpc://127.0.0.1:9394" -u h1 -p p1
+# 不同的主机可以运行相同的命令注册到同一组
+./stat_client -a "http://127.0.0.1:8080/report" -g g1 -p pp --alias "$(hostname)"
 
 # rust client 可用参数
 ./stat_client -h
@@ -444,34 +490,25 @@ python3 stat_client.py -a "http://127.0.0.1:8080/report" -u h1 -p p1 -n
 server {
   # ssl, domain 等其它 nginx 配置
 
-  # 反代 /report 请求
-  location = /report {
+  # 自动反代所有请求
+  location @proxy {
     proxy_set_header Host              $host;
     proxy_set_header X-Real-IP         $remote_addr;
     proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header X-Forwarded-Host  $host;
     proxy_set_header X-Forwarded-Port  $server_port;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection $http_connection;
 
-    proxy_pass http://127.0.0.1:8080/report;
+    proxy_pass http://127.0.0.1:8080;
   }
-  # 反代 json 数据请求
-  location = /json/stats.json {
-    proxy_set_header Host              $host;
-    proxy_set_header X-Real-IP         $remote_addr;
-    proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-    proxy_set_header X-Forwarded-Host  $host;
-    proxy_set_header X-Forwarded-Port  $server_port;
 
-    proxy_pass http://127.0.0.1:8080/json/stats.json;
-  }
-  # v1.4.0后，同样需要反代  /detail, /map
-
-  # 其它 html,js,css 等，走本地文本
+  # 如果主题存在相关文件则使用，否则回退到上游
   location / {
     root   /opt/ServerStatus/web; # 你自己修改的主题目录
     index  index.html index.htm;
+    try_files $uri $uri/ @proxy;
   }
 }
 ```
@@ -481,8 +518,12 @@ server {
   <summary>如何源码编译</summary>
 
 ```bash
+#
+cargo install stat_server
+cargo install stat_client
+# or
 # 按提示安装 rust 编译器
-curl https://sh.rustup.rs -sSf | sh
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 yum install -y openssl-devel
 git clone https://github.com/zdz/ServerStatus-Rust.git
 cd ServerStatus-Rust
